@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshBite - Home Food Delivery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: #f39c12;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-box {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 25px;
+            outline: none;
+            width: 200px;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        .cart-btn {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px;
+            min-height: calc(100vh - 160px);
+        }
+
+        .page {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Homepage Styles */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23e8f5e8" width="1200" height="600"/><path fill="%23c8e6c8" d="M0 400L1200 350V600H0V400Z"/><circle fill="%2327ae60" cx="200" cy="150" r="30"/><circle fill="%23f39c12" cx="400" cy="120" r="25"/><circle fill="%23e74c3c" cx="600" cy="180" r="35"/><circle fill="%239b59b6" cx="800" cy="140" r="28"/><circle fill="%2334495e" cx="1000" cy="170" r="32"/></svg>');
+            background-size: cover;
+            background-position: center;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-btn {
+            background: #f39c12;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .cta-btn:hover {
+            background: #e67e22;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        /* Products Page */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-info h3 {
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 1rem 0;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .add-to-cart:hover {
+            background: linear-gradient(135deg, #219a52, #27ae60);
+            transform: translateY(-2px);
+        }
+
+        /* Cart Styles */
+        .cart-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .cart-total {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .checkout-btn {
+            background: #27ae60;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 2rem;
+            border: none;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .logo img {
+        height: 60px;
+        vertical-align: middle;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #3498db;
+        }
+
+        .footer-section p, .footer-section a {
+            color: #bdc3c7;
+            text-decoration: none;
+            line-height: 1.6;
+        }
+
+        .footer-section a:hover {
+            color: #f39c12;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .payment-method {
+            padding: 0.5rem 1rem;
+            background: #34495e;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .search-box {
+                width: 150px;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            nav {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+        <header>
+        <nav>
+            <a href="#" class="logo">
+            <img src="Logo.jpg"> Mitho Nepali Khana</a> 
+            <ul class="nav-links">
+                <li><a href="Index.html">Home</a></li>
+                <li><a href="#">Products</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <input type="text" class="search-box" placeholder="Search products..." id="searchBox" onkeydown="handleSearch(event)">
+                <a href="#" class="btn">Login</a>
+                <a href="#" class="btn cart-btn">
+                    🛒 Cart
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Homepage -->
+        <div id="home" class="page active">
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Fresh Home-Cooked Nepali Meals</h1>
+                    <p>Delicious, healthy, and authentic home-style cooking right to your doorstep</p>
+                    <a class="cta-btn" href="#">Order Now</a>
+                </div>
+            </section>
+
+            <section class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🥘</div>
+                    <h3>Fresh Ingredients</h3>
+                    <p>We use only the freshest, locally-sourced ingredients to prepare your meals with love and care.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚚</div>
+                    <h3>Fast Delivery</h3>
+                    <p>Quick and reliable delivery service ensuring your food arrives hot and fresh at your door.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍🍳</div>
+                    <h3>Home-Style Cooking</h3>
+                    <p>Authentic home-cooked meals prepared with traditional recipes and modern culinary techniques.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Products Page -->
+        <div id="products" class="page">
+            <h1>Our Delicious Menu</h1>
+            <div class="products-grid">
+                <div class="product-card" onclick="showPage('rice')">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ffd89b, #19547b), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ffd89b&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%23fff&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;80&quot;/><circle fill=&quot;%23f39c12&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;60&quot;/></svg>'); background-size: cover; cursor: pointer;"></div>
+                    <div class="product-info">
+                        <h3>Rice Dishes</h3>
+                        <p>Explore our variety of delicious rice dishes</p>
+                        <div class="product-price">From $8.99</div>
+                        <button class="add-to-cart" onclick="event.stopPropagation(); showPage('rice')">View Rice Menu</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="showPage('vegetables')">
+                    <div class="product-image" style="background: linear-gradient(45deg, #a8e6cf, #2d5016), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23a8e6cf&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%2327ae60&quot; cx=&quot;80&quot; cy=&quot;80&quot; r=&quot;30&quot;/><circle fill=&quot;%2327ae60&quot; cx=&quot;120&quot; cy=&quot;120&quot; r=&quot;25&quot;/><circle fill=&quot;%232ecc71&quot; cx=&quot;100&quot; cy=&quot;50&quot; r=&quot;20&quot;/></svg>'); background-size: cover; cursor: pointer;"></div>
+                    <div class="product-info">
+                        <h3>Fresh Vegetables</h3>
+                        <p>Farm-fresh vegetables prepared with care</p>
+                        <div class="product-price">From $6.99</div>
+                        <button class="add-to-cart" onclick="event.stopPropagation(); showPage('vegetables')">View Vegetable Menu</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="showPage('meat')">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ffb3ba, #8b0000), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ffb3ba&quot; width=&quot;200&quot; height=&quot;200&quot;/><ellipse fill=&quot;%23e74c3c&quot; cx=&quot;100&quot; cy=&quot;100&quot; rx=&quot;70&quot; ry=&quot;40&quot;/><ellipse fill=&quot;%23c0392b&quot; cx=&quot;100&quot; cy=&quot;100&quot; rx=&quot;50&quot; ry=&quot;25&quot;/></svg>'); background-size: cover; cursor: pointer;"></div>
+                    <div class="product-info">
+                        <h3>Premium Meat</h3>
+                        <p>High-quality meat dishes with rich flavors</p>
+                        <div class="product-price">From $15.99</div>
+                        <button class="add-to-cart" onclick="event.stopPropagation(); showPage('meat')">View Meat Menu</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="showPage('dessert')">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ffcccb, #d2691e), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ffcccb&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%23ff69b4&quot; cx=&quot;100&quot; cy=&quot;80&quot; r=&quot;30&quot;/><rect fill=&quot;%23d2691e&quot; x=&quot;85&quot; y=&quot;110&quot; width=&quot;30&quot; height=&quot;60&quot;/><circle fill=&quot;%23dc143c&quot; cx=&quot;100&quot; cy=&quot;70&quot; r=&quot;8&quot;/></svg>'); background-size: cover; cursor: pointer;"></div>
+                    <div class="product-info">
+                        <h3>Sweet Desserts</h3>
+                        <p>Delightful desserts to satisfy your sweet tooth</p>
+                        <div class="product-price">From $4.99</div>
+                        <button class="add-to-cart" onclick="event.stopPropagation(); showPage('dessert')">View Dessert Menu</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="showPage('drinks')">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ffffba, #f0c674), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ffffba&quot; width=&quot;200&quot; height=&quot;200&quot;/><rect fill=&quot;%23f39c12&quot; x=&quot;70&quot; y=&quot;50&quot; width=&quot;60&quot; height=&quot;100&quot; rx=&quot;30&quot;/><circle fill=&quot;%23fff&quot; cx=&quot;100&quot; cy=&quot;80&quot; r=&quot;15&quot;/></svg>'); background-size: cover; cursor: pointer;"></div>
+                    <div class="product-info">
+                        <h3>Refreshing Drinks</h3>
+                        <p>Fresh beverages to quench your thirst</p>
+                        <div class="product-price">From $2.99</div>
+                        <button class="add-to-cart" onclick="event.stopPropagation(); showPage('drinks')">View Drinks Menu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rice Products Page -->
+        <div id="rice" class="page">
+            <h1>🍚 Rice Dishes</h1>
+            <button onclick="showPage('products')" style="margin-bottom: 2rem; padding: 0.5rem 1rem; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">← Back to All Products</button>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ffd89b, #ff8c42), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ffd89b&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%23fff&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;80&quot;/><circle fill=&quot;%23f39c12&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;60&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Aromatic Basmati Rice</h3>
+                        <p>Premium basmati rice cooked with aromatic spices and saffron</p>
+                        <div class="product-price">$8.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Aromatic Basmati Rice', 8.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ff9a9e, #fecfef), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ff9a9e&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%23fff&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;70&quot;/><circle fill=&quot;%23e74c3c&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;50&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Chicken Biryani</h3>
+                        <p>Traditional chicken biryani with tender meat and fragrant rice</p>
+                        <div class="product-price">$16.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Chicken Biryani', 16.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #a8edea, #fed6e3), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23a8edea&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%2327ae60&quot; cx=&quot;80&quot; cy=&quot;80&quot; r=&quot;25&quot;/><circle fill=&quot;%23f39c12&quot; cx=&quot;120&quot; cy=&quot;120&quot; r=&quot;30&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Vegetable Fried Rice</h3>
+                        <p>Colorful mixed vegetables stir-fried with jasmine rice</p>
+                        <div class="product-price">$10.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Vegetable Fried Rice', 10.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ffecd2, #fcb69f), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ffecd2&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%23ff6b6b&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;60&quot;/><circle fill=&quot;%23fff&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;40&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Coconut Rice</h3>
+                        <p>Creamy coconut rice with curry leaves and cashews</p>
+                        <div class="product-price">$9.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Coconut Rice', 9.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vegetables Products Page -->
+        <div id="vegetables" class="page">
+            <h1>🥬 Fresh Vegetables</h1>
+            <button onclick="showPage('products')" style="margin-bottom: 2rem; padding: 0.5rem 1rem; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">← Back to All Products</button>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #a8e6cf, #88d8a3), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23a8e6cf&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%2327ae60&quot; cx=&quot;70&quot; cy=&quot;70&quot; r=&quot;25&quot;/><circle fill=&quot;%232ecc71&quot; cx=&quot;130&quot; cy=&quot;130&quot; r=&quot;20&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Mixed Seasonal Vegetables</h3>
+                        <p>Fresh seasonal vegetables sautéed with herbs and spices</p>
+                        <div class="product-price">$6.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Mixed Seasonal Vegetables', 6.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ffeaa7, #fab1a0), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ffeaa7&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%23f39c12&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;50&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Roasted Root Vegetables</h3>
+                        <p>Carrots, potatoes, and parsnips roasted to perfection</p>
+                        <div class="product-price">$8.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Roasted Root Vegetables', 8.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #fd79a8, #fdcb6e), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23fd79a8&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%23e84393&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;40&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Steamed Broccoli & Cauliflower</h3>
+                        <p>Perfectly steamed broccoli and cauliflower with garlic butter</p>
+                        <div class="product-price">$7.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Steamed Broccoli & Cauliflower', 7.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #00b894, #00cec9), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%2300b894&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%2300cec9&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;60&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Green Bean Almondine</h3>
+                        <p>Fresh green beans with toasted almonds and lemon</p>
+                        <div class="product-price">$9.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Green Bean Almondine', 9.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meat Products Page -->
+        <div id="meat" class="page">
+            <h1>🥩 Premium Meat</h1>
+            <button onclick="showPage('products')" style="margin-bottom: 2rem; padding: 0.5rem 1rem; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">← Back to All Products</button>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ff7675, #d63031), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ff7675&quot; width=&quot;200&quot; height=&quot;200&quot;/><ellipse fill=&quot;%23e74c3c&quot; cx=&quot;100&quot; cy=&quot;100&quot; rx=&quot;70&quot; ry=&quot;50&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Grilled Chicken Breast</h3>
+                        <p>Tender grilled chicken breast with herbs and lemon</p>
+                        <div class="product-price">$15.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Grilled Chicken Breast', 15.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #8b0000, #a0522d), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%238b0000&quot; width=&quot;200&quot; height=&quot;200&quot;/><ellipse fill=&quot;%23cd5c5c&quot; cx=&quot;100&quot; cy=&quot;100&quot; rx=&quot;60&quot; ry=&quot;40&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Beef Steak</h3>
+                        <p>Juicy beef steak cooked to your preference with garlic butter</p>
+                        <div class="product-price">$24.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Beef Steak', 24.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ffeaa7, #fab1a0), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ffeaa7&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%23f39c12&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;50&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Lamb Curry</h3>
+                        <p>Slow-cooked lamb in rich aromatic curry sauce</p>
+                        <div class="product-price">$19.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Lamb Curry', 19.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ff9ff3, #f368e0), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ff9ff3&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%23f368e0&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;45&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>BBQ Pork Ribs</h3>
+                        <p>Tender pork ribs with smoky BBQ sauce</p>
+                        <div class="product-price">$18.99</div>
+                        <button class="add-to-cart" onclick="addToCart('BBQ Pork Ribs', 18.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dessert Products Page -->
+        <div id="dessert" class="page">
+            <h1>🍰 Sweet Desserts</h1>
+            <button onclick="showPage('products')" style="margin-bottom: 2rem; padding: 0.5rem 1rem; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">← Back to All Products</button>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ffcccb, #ff69b4), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ffcccb&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%23ff69b4&quot; cx=&quot;100&quot; cy=&quot;80&quot; r=&quot;30&quot;/><rect fill=&quot;%23d2691e&quot; x=&quot;85&quot; y=&quot;110&quot; width=&quot;30&quot; height=&quot;60&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Chocolate Lava Cake</h3>
+                        <p>Warm chocolate cake with molten chocolate center</p>
+                        <div class="product-price">$7.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Chocolate Lava Cake', 7.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ffeaa7, #fdcb6e), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ffeaa7&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%23f39c12&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;40&quot;/><circle fill=&quot;%23fff&quot; cx=&quot;100&quot; cy=&quot;85&quot; r=&quot;15&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Mango Cheesecake</h3>
+                        <p>Creamy cheesecake topped with fresh mango slices</p>
+                        <div class="product-price">$6.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Mango Cheesecake', 6.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #e17055, #d63031), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23e17055&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%23d63031&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;50&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Strawberry Tiramisu</h3>
+                        <p>Classic tiramisu with fresh strawberries and mascarpone</p>
+                        <div class="product-price">$8.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Strawberry Tiramisu', 8.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #a29bfe, #6c5ce7), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23a29bfe&quot; width=&quot;200&quot; height=&quot;200&quot;/><circle fill=&quot;%236c5ce7&quot; cx=&quot;100&quot; cy=&quot;100&quot; r=&quot;45&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Blueberry Panna Cotta</h3>
+                        <p>Silky smooth panna cotta with fresh blueberry compote</p>
+                        <div class="product-price">$5.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Blueberry Panna Cotta', 5.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Drinks Products Page -->
+        <div id="drinks" class="page">
+            <h1>🥤 Refreshing Drinks</h1>
+            <button onclick="showPage('products')" style="margin-bottom: 2rem; padding: 0.5rem 1rem; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">← Back to All Products</button>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ffffba, #f0c674), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ffffba&quot; width=&quot;200&quot; height=&quot;200&quot;/><rect fill=&quot;%23f39c12&quot; x=&quot;70&quot; y=&quot;50&quot; width=&quot;60&quot; height=&quot;100&quot; rx=&quot;30&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Fresh Orange Juice</h3>
+                        <p>Freshly squeezed orange juice with pulp</p>
+                        <div class="product-price">$3.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Fresh Orange Juice', 3.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #ff9ff3, #f368e0), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%23ff9ff3&quot; width=&quot;200&quot; height=&quot;200&quot;/><rect fill=&quot;%23f368e0&quot; x=&quot;75&quot; y=&quot;40&quot; width=&quot;50&quot; height=&quot;120&quot; rx=&quot;25&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Berry Smoothie</h3>
+                        <p>Mixed berry smoothie with yogurt and honey</p>
+                        <div class="product-price">$4.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Berry Smoothie', 4.99)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #00b894, #00cec9), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%2300b894&quot; width=&quot;200&quot; height=&quot;200&quot;/><rect fill=&quot;%2300cec9&quot; x=&quot;70&quot; y=&quot;50&quot; width=&quot;60&quot; height=&quot;100&quot; rx=&quot;30&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Green Tea Latte</h3>
+                        <p>Matcha green tea latte with steamed milk</p>
+                        <div class="product-price">$4.49</div>
+                        <button class="add-to-cart" onclick="addToCart('Green Tea Latte', 4.49)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(45deg, #74b9ff, #0984e3), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 200 200&quot;><rect fill=&quot;%2374b9ff&quot; width=&quot;200&quot; height=&quot;200&quot;/><rect fill=&quot;%230984e3&quot; x=&quot;75&quot; y=&quot;40&quot; width=&quot;50&quot; height=&quot;120&quot; rx=&quot;25&quot;/></svg>'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3>Iced Coffee</h3>
+                        <p>Cold brew coffee served over ice with cream</p>
+                        <div class="product-price">$2.99</div>
+                        <button class="add-to-cart" onclick="addToCart('Iced Coffee', 2.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Us Page -->
+        <div id="about" class="page">
+            <h1>About FreshBite</h1>
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin: 2rem 0;">
+                <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                    FreshBite was born from a simple belief: everyone deserves access to delicious, home-cooked meals made with love and the freshest ingredients. Founded in 2023, we've been dedicated to bringing the warmth and comfort of home cooking directly to your doorstep.
+                </p>
+                <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                    Our talented team of home chefs combines traditional cooking methods with modern culinary techniques to create meals that not only taste amazing but also nourish your body and soul. We source our ingredients locally whenever possible, supporting our community while ensuring the highest quality and freshness.
+                </p>
+                <p style="font-size: 1.1rem; line-height: 1.8;">
+                    Whether you're looking for a quick lunch, a family dinner, or catering for a special event, FreshBite is here to serve you with passion, quality, and convenience. We're not just delivering food – we're sharing the love that goes into every meal we prepare.
+                </p>
+            </div>
+        </div>
+
+        <!-- Contact Page -->
+        <div id="contact" class="page">
+            <h1>Contact Us</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <h3 style="margin-bottom: 1rem; color: #2c3e50;">Get in Touch</h3>
+                    <form>
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="cta-btn" style="width: 100%;">Send Message</button>
+                    </form>
+                </div>
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <h3 style="margin-bottom: 1rem; color: #2c3e50;">Contact Information</h3>
+                    <p style="margin-bottom: 1rem;"><strong>📍 Address:</strong><br>123 Food Street, Culinary District<br>Fresh City, FC 12345</p>
+                    <p style="margin-bottom: 1rem;"><strong>📞 Phone:</strong><br>+1 (555) 123-BITE<br>+1 (555) 123-2483</p>
+                    <p style="margin-bottom: 1rem;"><strong>📧 Email:</strong><br>hello@freshbite.com<br>orders@freshbite.com</p>
+                    <p style="margin-bottom: 1rem;"><strong>🕒 Hours:</strong><br>Monday - Friday: 9:00 AM - 10:00 PM<br>Saturday - Sunday: 10:00 AM - 11:00 PM</p>
+                    <p><strong>🚚 Delivery Hours:</strong><br>Daily: 11:00 AM - 9:30 PM</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Page -->
+        <div id="cart" class="page">
+            <h1>Your Cart</h1>
+            <div id="cartItems"></div>
+            <div class="cart-total">
+                <h3>Total: $<span id="cartTotal">0.00</span></h3>
+                <button class="checkout-btn" onclick="openModal('checkoutModal')">Proceed to Checkout</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Login to FreshBite</h2>
+            <form>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" required>
+                </div>
+                <button type="submit" class="cta-btn" style="width: 100%;">Login</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">
+                Don't have an account? <a href="#" style="color: #3498db;">Sign up here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('checkoutModal')">&times;</span>
+            <h2>Checkout</h2>
+            <form>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Delivery Address</label>
+                    <textarea rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" required>
+                </div>
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select required>
+                        <option value="">Select Payment Method</option>
+                        <option value="credit-card">Credit Card</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="bank-transfer">Bank Transfer</option>
+                        <option value="cash-on-delivery">Cash on Delivery</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Special Instructions</label>
+                    <textarea rows="2" placeholder="Any special requests or delivery instructions..."></textarea>
+                </div>
+                <button type="submit" class="cta-btn" style="width: 100%;" onclick="processPayment()">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Information</h3>
+                <p>📍 Brunevang 80 B<br>2610 Rødovre</p>
+                <p>📞 Phone: +45-60225083</p>
+                <p>📧 Email: mithonepalikhana@gmail.com</p>
+                <p>🕒 Mon-Fri 9AM-10PM</p>
+                <p>🕒 Weekends 10AM-11PM</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <p><a href="Index.html">Home</a></p>
+                <p><a href="Products.html">Products</a></p>
+                <p><a href="About.html">About Us</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <p><a href="#">Facebook</a></p>
+                <p><a href="#">Instagram</a></p>
+                <p><a href="#">Twitter</a></p>
+                <p><a href="#">YouTube</a></p>
+            </div>
+
+        </div>
+        <div class="payment-methods">
+            <div class="payment-method">💳 Credit Cards</div>
+            <div class="payment-method">🅿️ PayPal</div>
+            <div class="payment-method">🏦 Bank Transfer</div>
+            <div class="payment-method">💵 Cash on Delivery</div>
+        </div>
+         </div>
+        <p>© 2025 Mithonepalikahana. All rights reserved.</p>
+        </footer>
